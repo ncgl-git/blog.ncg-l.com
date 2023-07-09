@@ -56,9 +56,6 @@ jobs:
           aws-region: us-east-2
           role-to-assume: arn:aws:iam::236819259961:role/githubActions_uploadBlog
           role-session-name: githubActions_deploy
-
-      - name: Empty Destination Bucket
-        run: aws s3 rm $AWS_BUCKET --recursive
             
       - name: Deploy with Hugo
         run:  hugo deploy --force --logLevel info --maxDeletes -1
