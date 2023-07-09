@@ -57,5 +57,5 @@ jobs:
           role-to-assume: arn:aws:iam::236819259961:role/githubActions_uploadBlog
           role-session-name: githubActions_deploy
             
-      - name: Copy files to production website with AWS CLI
-        run:  aws s3 sync public $AWS_BUCKET
+      - name: Deploy with Hugo
+        run:  hugo deploy
