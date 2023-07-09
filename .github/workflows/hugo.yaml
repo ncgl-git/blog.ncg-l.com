@@ -58,4 +58,4 @@ jobs:
           role-session-name: githubActions_deploy
             
       - name: Deploy with Hugo
-        run:  hugo deploy --logLevel info --maxDeletes -1
+        run:  hugo deploy --force --logLevel info --maxDeletes -1
