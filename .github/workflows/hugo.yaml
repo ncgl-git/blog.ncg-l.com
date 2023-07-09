@@ -17,7 +17,6 @@ defaults:
     shell: bash
 
 env:
-    AWS_REGION: us-east-2
     BASE_URL: blog.ncg-l.com
     AWS_BUCKET: s3://blog.ncg-l.com
     AWS_DEPLOY_ROLE_ARN: arn:aws:iam::236819259961:role/githubActions_uploadBlog
@@ -53,13 +52,10 @@ jobs:
       - name: Build with Hugo
         run: hugo --gc --minify 
 
-      - name: Checkout
-        uses: actions/checkout@v3
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-region: $AWS_REGION
+          aws-region: us-east-2
           role-to-assume: $AWS_DEPLOY_ROLE_ARN
           role-session-name: githubActions_deploy
             
