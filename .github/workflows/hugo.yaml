@@ -1,0 +1,71 @@
+# Sample workflow for building and deploying a Hugo site to GitHub Pages
+name: Deploy blog.ncg-l.com
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches:
+      - main
+      - test_cicd
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Default to bash
+defaults:
+  run:
+    shell: bash
+
+env:
+    AWS_REGION: us-east-2
+    BASE_URL: blog.ncg-l.com
+    AWS_BUCKET: s3://blog.ncg-l.com
+    AWS_DEPLOY_ROLE_ARN: arn:aws:iam::236819259961:role/githubActions_uploadBlog
+
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    env:
+      HUGO_VERSION: 0.115.1
+    steps:
+
+      - name: Install Hugo CLI
+        run: |
+          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
+          && sudo dpkg -i ${{ runner.temp }}/hugo.deb   
+
+      - name: Install Dart Sass
+        run: sudo snap install dart-sass
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Install Node.js dependencies
+        run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
+
+      - name: Build with Hugo
+        run: hugo --gc --minify 
+
+  deploy:
+    name: Upload to Amazon S3
+    runs-on: ubuntu-latest
+    # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+    permissions:
+        id-token: write
+        contents: read
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+
+        - name: Configure AWS Credentials
+          uses: aws-actions/configure-aws-credentials@v2
+          with:
+            role-to-assume: $AWS_DEPLOY_ROLE_ARN
+            role-session-name: githubActions_deploy
+            
+        - name: Copy files to the production website with the AWS CLI
+          run:  aws s3 sync public $Greeting $AWS_BUCKET
