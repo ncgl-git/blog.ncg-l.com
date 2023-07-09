@@ -23,9 +23,12 @@ env:
     AWS_DEPLOY_ROLE_ARN: arn:aws:iam::236819259961:role/githubActions_uploadBlog
 
 jobs:
-  # Build job
-  build:
+  deploy:
     runs-on: ubuntu-latest
+    # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+    permissions:
+        id-token: write
+        contents: read
     env:
       HUGO_VERSION: 0.115.1
     steps:
@@ -50,22 +53,15 @@ jobs:
       - name: Build with Hugo
         run: hugo --gc --minify 
 
-  deploy:
-    name: Upload to Amazon S3
-    runs-on: ubuntu-latest
-    # These permissions are needed to interact with GitHub's OIDC Token endpoint.
-    permissions:
-        id-token: write
-        contents: read
-    steps:
-        - name: Checkout
-          uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-        - name: Configure AWS Credentials
-          uses: aws-actions/configure-aws-credentials@v2
-          with:
-            role-to-assume: $AWS_DEPLOY_ROLE_ARN
-            role-session-name: githubActions_deploy
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: $AWS_REGION
+          role-to-assume: $AWS_DEPLOY_ROLE_ARN
+          role-session-name: githubActions_deploy
             
-        - name: Copy files to the production website with the AWS CLI
-          run:  aws s3 sync public $Greeting $AWS_BUCKET
+      - name: Copy files to the production website with the AWS CLI
+        run:  aws s3 sync public $Greeting $AWS_BUCKET
