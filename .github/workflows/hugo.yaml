@@ -17,9 +17,7 @@ defaults:
     shell: bash
 
 env:
-    BASE_URL: blog.ncg-l.com
     AWS_BUCKET: s3://blog.ncg-l.com
-    AWS_DEPLOY_ROLE_ARN: arn:aws:iam::236819259961:role/githubActions_uploadBlog
 
 jobs:
   deploy:
@@ -56,8 +54,8 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-region: us-east-2
-          role-to-assume: $AWS_DEPLOY_ROLE_ARN
+          role-to-assume: arn:aws:iam::236819259961:role/githubActions_uploadBlog
           role-session-name: githubActions_deploy
             
-      - name: Copy files to the production website with the AWS CLI
-        run:  aws s3 sync public $Greeting $AWS_BUCKET
+      - name: Copy files to production website with AWS CLI
+        run:  aws s3 sync public $AWS_BUCKET
