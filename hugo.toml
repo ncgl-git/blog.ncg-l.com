@@ -1,5 +1,5 @@
 baseURL = "https://blog.ncg-l.com"
-title = "ncgl"
+title = "ncg-l"
 languageCode = "en-us"
 theme = "devise"
 relativeURLs = true
@@ -32,9 +32,9 @@ copyright = "&copy; 2023, Nicholas Grillini-Lawrence"
 # Configuration Features
 [params]
   description = "Your meta description"      # Your meta description of the site
-  header_title = "ncgl"                      # Your header title
+  header_title = "ncg-l"                      # Your header title
   header_subtitle = "developer field notes"  # Your header subtitle
-  home_image = "/static/images/avatar.jpg"   # Path to header image starting from the static directory
+  home_image = "images/avatar.jpg"           # Path to header image starting from the static directory
   recent_posts = 5                           # Max amount of recent posts to show
   mainSections = ["posts", "post", "blog"]   # Main sections to include in recent posts
   [params.style]                             # CSS style overrides
@@ -45,7 +45,7 @@ copyright = "&copy; 2023, Nicholas Grillini-Lawrence"
     href = "http://github.com/ncgl-git"      # Link to associate with icon (http://, https://, mailto:)
   [[params.social]]
     fa_icon = "fab fa-linkedin-in fa-1x"
-    href = "http://linkedin.com/ncgl"
+    href = "http://linkedin.com/in/ncg-l"
 
 [deployment]
 # By default, files are uploaded in an arbitrary order.
