@@ -2,6 +2,7 @@
 title: "Thoughts on Python Unittesting"
 date: 2023-09-14T11:40:43-05:00
 draft: true
+categories: [thinking out loud]
 ---
 
 Unit tests need to balance 3 things:
