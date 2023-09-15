@@ -1,7 +1,7 @@
 ---
 title: "Thoughts on Python Unittesting"
 date: 2023-09-14T11:40:43-05:00
-draft: true
+draft: false
 categories: [thinking out loud]
 ---
 
