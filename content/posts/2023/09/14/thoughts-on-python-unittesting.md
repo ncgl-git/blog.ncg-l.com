@@ -11,7 +11,7 @@ Unit tests need to balance 3 things:
 - immunity to arbitrary refactors
 - readability
 
-## Confidence
+### Confidence
 Are we using the right tools, the right way, to test the right things?
 
 `unittest.mock.MagicMock` will let you access any attribute, any method, without complaining (assertion variants aside). This opens the floodgates for typos, and if your tests are bad, you can easily write a test that returns a false positive. Here's an example:
@@ -69,12 +69,12 @@ Given these last 2 points, lets see what a better test would look like:
 
 This will detect unintended changes to headers, payloads, urls, methods, call_counts, etc.
 
-# Immune to Refactoring
+### Immune to Refactoring
 One of the biggest complaints I hear about unittests (and have experienced myself), is that as a system scales out, or certain patterns are identified, existing unittests pressure against refactoring. It's actually an enormous burden on the developer.
 
 Only testing IO allows for making these intermediary changes freely. There aren't tests that a random class is invoked, or an obscure method is called. IO tests guarantee the core functionality works (and because of `.assert_has_calls`, works exactly like we expect). I'm talking things like db writes with `boto3` or http calls with `requests` - modules unlikely to change from a refactor. As long these go unmodified, you can moves things around. (*The exception may be the module locations of your mocks*)
 
-## Test public first
+### Test public first
 From my experience, private methods only serve to logically group the behaviour of your code. They do not represent a piece of functionality. To this extent they should not be your priority, because the underlying logic may change, or another dev may visualize the process differently. Let me contrive an example:
 
 
@@ -109,7 +109,7 @@ If you scale this out to classes that perhaps contain only one public method, bu
 
 This is very important to distinguish because, if you weren't thinking about how interfaces exist in your codebase, you are now.
 
-# Readability
+### Readability
 
 When a refactor breaks a test this is usually how it goes:
 1. Dev makes an improvement to the codebase by doing something

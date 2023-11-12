@@ -30,7 +30,7 @@ I'd like to go over some different patterns for catching this case in Python and
 
 This option reads the entire generator into a list (storing it in memory) and then uses the already discussed built-in function to check its length. _I do not like this option._ 
 
-```
+```python
 def option_1(some_iterator):
 
     as_list = list(some_iterator)
@@ -50,7 +50,7 @@ def option_1(some_iterator):
 
 This approach is my preference, as it allows you to both unpack the iterable and name the internal variable in one line. If the provided argument is a generator, it will only exhaust 2 iterables before raising the error - i.e. it doesn't dump the entire generator into memory and then raise the error.
 
-```
+```python
 def option_2a(some_iterator):
     try:
         [singular_item] = some_iterator
@@ -68,7 +68,8 @@ def option_2a(some_iterator):
 **Option 2b:**
 
 This approach is slightly different in that, if provided a generator, it will exhaust all iterations, and assign them to the _ variable. In some cases, this could be better as it allows you to provide more context in the error message about what was additionally returned.
-```
+
+```python
 def option_2b(some_iterator):
     try:
         singular_item, *_ = some_iterator

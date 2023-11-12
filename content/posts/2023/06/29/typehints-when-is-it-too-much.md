@@ -12,7 +12,7 @@ Now, as a senior developer on a global team, I work with people of various techn
 
 A junior developer was tasked with performing optional input validation on a class while not modifying the existing class. I envisioned the following, but knew there were several ways to skin this cat.
 
-```
+```python
 class AuthAccount:  # ParentClass
     def __init__(**kwargs):
         self.a = kwargs['a']
@@ -26,11 +26,12 @@ class MachineryAuthAccount(AuthAccount):  #ChildClass
     def validate(**kwargs):
         # the specific logic to be implemented, all the complexity to your hearts desire
         ...
+
 ```
 
 The developer produced this:
 
-```
+```python
 from __future__ import annotations
 
 import dataclasses
@@ -859,7 +860,7 @@ I want to assign a task to my developers, and have them understand the relevant 
 
 I don’t have much to say on this topic, besides this: One of the first objects you master in Python is the dictionary, and with that comes a familiarity of the .get method. Does the following annotation help that familiarity? Where is the sweet spot between time saved with typehints and time spent understanding them?
 
-```
+```python
  @overload
     def get(self, key: Literal["start_date"], default: None = None) -> Optional[datetime]:
         ...
