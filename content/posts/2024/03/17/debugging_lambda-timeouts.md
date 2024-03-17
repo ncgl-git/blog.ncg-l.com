@@ -2,7 +2,7 @@
 title: "Debugging Lambda Timeouts"
 date: 2024-03-17T06:21:56-05:00
 draft: false
-categories: [developer guide]
+categories: [programming adventures]
 ---
 
 On 2023-08-21, several days after increasing dev costs were noticed, sprint Q-23.Q3.4 began and I was assigned DB-2292. This ticket was independently created a month before and asked for investigation into lambda timeouts. Because of performance improvements over the past 3 months, noticing a timeout was surprising and indicated a significantly large file. 
