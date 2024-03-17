@@ -4,7 +4,7 @@ languageCode = "en-us"
 theme = "devise"
 relativeURLs = true
 enableEmoji = true
-googleAnalytics = ""
+googleAnalytics = "G-04MD8SNRHP"
 enableRobotsTXT = true
 copyright = "&copy; 2023, Nicholas Grillini-Lawrence"
 
@@ -40,6 +40,7 @@ copyright = "&copy; 2023, Nicholas Grillini-Lawrence"
   [params.style]                             # CSS style overrides
     backgroundColor = "#f8f9fa"
     fontColor = "#212529"
+    homeImageBorderColor = "#00000000"
   [[params.social]]
     fa_icon = "fab fa-github fa-1x"          # Font Awesome icon class
     href = "http://github.com/ncgl-git"      # Link to associate with icon (http://, https://, mailto:)
@@ -51,7 +52,7 @@ copyright = "&copy; 2023, Nicholas Grillini-Lawrence"
 # By default, files are uploaded in an arbitrary order.
 # Files that match the regular expressions in the "Order" list
 # will be uploaded first, in the listed order.
-order = [".jpg$", ".gif$"]
+order = [".png$", ".jpg$", ".gif$"]
 
 
 [[deployment.targets]]
