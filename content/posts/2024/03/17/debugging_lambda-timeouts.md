@@ -19,7 +19,7 @@ The specific lambda in question was the dev-ingestor-john-deere-v1-sqs-raw-norma
 
 Looking through CloudWatch metrics for this dev lambda, we see the 6-month history showing a drastic increase starting June 2nd. 
 
-![dev lambda duration](./assets/dev-lambda-duration-before.png "dev lambda duration")
+![dev lambda duration](content/posts/2024/03/17/assets/dev-lambda-duration-before.png "dev lambda duration")
 
 Several things are important in this context:
 1. QA & UAT versions of this lambda show decreased performance and timeouts starting roughly 2 weeks later, indicating this could have been a reversion introduced as part of a release. 
@@ -31,13 +31,13 @@ It is difficult to track down what code was deployed to dev during this time, as
 
 The only change of note is the inclusion of the DataDog Serverless Plugin, which introduces a new Lambda layer around our functions.
 
-![new datadog lambda layer](./assets/datadog-plugin.png "datadog plugin")
+![new datadog lambda layer](content/posts/2024/03/17/assets/datadog-plugin.png "datadog plugin")
 
 To understand the issue with @Berkh Tsogtbaatar, we deployed a new configuration of the Datadog Serverless plugin to enable profiling and separately manually enabled CodeGuru profiling in AWS. Respectively, these showed the following flamegraphs:
 
-![flamegraph in datadog](./assets/flamegraph-datadog.png "flamegraph in datadog")
+![flamegraph in datadog](content/posts/2024/03/17/assets/flamegraph-datadog.png "flamegraph in datadog")
 
-![flamegraph in xray](./assets/flamegraph-xray.png "flamegraph in xray")
+![flamegraph in xray](content/posts/2024/03/17/assets/flamegraph-xray.png "flamegraph in xray")
 
 These graphs are telling: for an invocation with a CPU time of 3 minutes, the wall time was almost 15 minutes, the maximum Lambda supports before dying. Both flamegraphs showed the wall time being consumed by the Python stdlibs threading module, imported from the Datadog layer’s periodic.py file. Seeing this, we knew this was not a performance-related reversion introduced in our code. In fact, these lambda handlers were never getting invoked - all the walltime was spent in the layer wrapping of the handler. We know this because subsequent deploys with debug logging statements were never printed in subsequent runs.
 
@@ -61,27 +61,27 @@ was not the problem here, I began looking into EFS.
 All Connect EFS were set to generalPurpose and burst. Burst throughput scales IO dependent on the amount of data on the file system and accrues burst “credits” over time that can be spent during more intensive IO operations: This was a concept the BE team was not familiar with, as the majority of our team (including me) inherited these services upon employement. Using Cloudwatch, we compare burst credits across our lower environments for the past 3 months we see this:
 
 ##### Dev
-![burst credits - dev](./assets/burst-credit-balance-dev.png "burst credits - dev")
+![burst credits - dev](content/posts/2024/03/17/assets/burst-credit-balance-dev.png "burst credits - dev")
 ##### QA
-![burst credits - qa](./assets/burst-credit-balance-qa.png "burst credits - qa")
+![burst credits - qa](content/posts/2024/03/17/assets/burst-credit-balance-qa.png "burst credits - qa")
 ##### UAT 
-![burst credits - uat](./assets/burst-credit-balance-uat.png "burst credits - uat")
+![burst credits - uat](content/posts/2024/03/17/assets/burst-credit-balance-uat.png "burst credits - uat")
 
 #### Our “burst” EFS had consumed all of its credits in Dev. 
 
 The rate at which EFS accrues credits is dependant on the amount of storage it holds. 3 months ago, we released a lambda that removed stale files from EFS. (link hidden). This was done to prevent an accrual of data from badly managed file IO across many lambdas and teams. What wasn’t realized at the time, was that this would affect the baseline rate at which burst credits were collected. I do not have a comparably long graph of Dev EFS storage sizes, but a 3-month graph would directionally resemble this 1 week example, where each color is a storage tier: 
 
-![directional example of our efs storage](./assets/efs-storage-example.png "directional example of our efs storage")
+![directional example of our efs storage](content/posts/2024/03/17/assets/efs-storage-example.png "directional example of our efs storage")
 
 This much smaller Dev EFS size would explain the difference in EFS burst credits across environments, as QA and UAT are much larger than 30-40gb. 
 
 To test the theory, I switched our EFS from “burst” to “elastic”, a more expensive, but less limited throughput setting. The below chart shows the difference in throughput - the drop is immediate:
 
-![burst to elastic utilization](./assets/burst-to-elastic-utilization.png "burst to elastic utilization")
+![burst to elastic utilization](content/posts/2024/03/17/assets/burst-to-elastic-utilization.png "burst to elastic utilization")
 
 dev-ingestor-john-deere-v1-sqs-raw-normalizer invocations resumed after this deploy. 
 
-![dev lambda duration after](./assets/dev-lambda-duration-after.png "dev lambda duration after")
+![dev lambda duration after](content/posts/2024/03/17/assets/dev-lambda-duration-after.png "dev lambda duration after")
 
 ### Key Points
  1. As we moved to Parquet (using Geopandas & Pyarrow, which enable multithreaded reads) we traded significant IO & compute time for consuming more burst credits.
@@ -90,6 +90,7 @@ dev-ingestor-john-deere-v1-sqs-raw-normalizer invocations resumed after this dep
 
 ### Proposals for Mitigating Steps
 At the moment EFS is a required service, as it enables us to use many important but large Python packages for computation.
+
 ###### Move Lambda IO operations to Lambda ephemeral storage 
 It is untenable to write large amounts of data to EFS simply to increase our burst credit accrual rate. Instead, we should leverage Lambda ephemeral storage for our IO operations, and keep EFS only for hosting large Python packages.
 
