@@ -91,11 +91,11 @@ dev-ingestor-john-deere-v1-sqs-raw-normalizer invocations resumed after this dep
 ### Proposals for Mitigating Steps
 At the moment EFS is a required service, as it enables us to use many important but large Python packages for computation.
 
-###### Move Lambda IO operations to Lambda ephemeral storage 
+##### Move Lambda IO operations to Lambda ephemeral storage 
 It is untenable to write large amounts of data to EFS simply to increase our burst credit accrual rate. Instead, we should leverage Lambda ephemeral storage for our IO operations, and keep EFS only for hosting large Python packages.
 
-###### Reduce unneeded IO operations
+##### Reduce unneeded IO operations
 At least one location in our code performs unnecssary IO operations: the raw normalizer unzips the shapefile when it only needs the metadata. This can be rewritten so that the John Deere raw normalizer only unzips the metadata file. This would further reduce the cost of increasing Lambda ephemeral storage.
 
-###### Remove uneeded events
+##### Remove uneeded events
 As Connect matured, several features saw no use or importance: the normalization of the FFT for storage in the hierarchy metadata table and access via Graphql. Removing the eventing of these payloads to the raw-persister would be a single location we could comment out to prevent downstream lambdas from invoking, and thus be another way to reduce cost, and limit the breadth of knowledge Connect BE engineers be required to know.
