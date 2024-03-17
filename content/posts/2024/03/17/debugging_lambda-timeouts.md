@@ -61,7 +61,7 @@ was not the problem here, I began looking into EFS.
 All Connect EFS were set to generalPurpose and burst. Burst throughput scales IO dependent on the amount of data on the file system and accrues burst “credits” over time that can be spent during more intensive IO operations: This was a concept the BE team was not familiar with, as the majority of our team (including me) inherited these services upon employement. Using Cloudwatch, we compare burst credits across our lower environments for the past 3 months we see this:
 
 ##### Dev
-![burst credits - dev](/static/images/debugging-lambda-timeouts/burst-credit-balance-dev.png "burst credits - dev")
+![burst credits - dev](/images/debugging-lambda-timeouts/burst-credit-balance-dev.png "burst credits - dev")
 ##### QA
 ![burst credits - qa](/static/images/debugging-lambda-timeouts/burst-credit-balance-qa.png "burst credits - qa")
 ##### UAT 

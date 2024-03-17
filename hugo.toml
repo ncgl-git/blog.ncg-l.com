@@ -51,7 +51,7 @@ copyright = "&copy; 2023, Nicholas Grillini-Lawrence"
 # By default, files are uploaded in an arbitrary order.
 # Files that match the regular expressions in the "Order" list
 # will be uploaded first, in the listed order.
-order = [".jpg$", ".gif$"]
+order = [".png$", ".jpg$", ".gif$"]
 
 
 [[deployment.targets]]
@@ -76,7 +76,7 @@ cloudFrontDistributionID ="ETIF0ZF6MTKVI"
 
 [[deployment.matchers]]
 # Cache static assets for 1 year.
-pattern = "^.+\\.(js|css|svg|ttf|png)$"
+pattern = "^.+\\.(js|css|svg|ttf)$"
 cacheControl = "max-age=31536000, no-transform, public"
 gzip = true
 
